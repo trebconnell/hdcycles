@@ -61,6 +61,8 @@ add_definitions(
   -DCCL_NAMESPACE_END=}
 )
 
+option(WITH_CYCLES_EMBREE "Was Cycles built with embree support." OFF)
+
 if($ENV{USD_HOUDINI})
   option(USE_USD_HOUDINI "Use Houdini" ON)
   add_definitions(-DUSE_USD_HOUDINI)
@@ -75,6 +77,54 @@ if($ENV{USD_HOUDINI})
   add_definitions(-DHBOOST_ALL_DYN_LINK)
 endif()
 
+if (WITH_CYCLES_EMBREE)
+    find_package(EMBREE REQUIRED)
+endif()
+
+if (WITH_CYCLES_OSL)
+	add_definitions(-DWITH_OSL)
+	# osl 1.9.x
+	add_definitions(-DOSL_STATIC_BUILD)
+	# pre 1.9
+	add_definitions(-DOSL_STATIC_LIBRARY)
+	
+	# Cycles OSL binaries require this
+	add_definitions(
+			-DOIIO_STATIC_BUILD
+			-DOIIO_STATIC_DEFINE)
+
+    find_package(OSL REQUIRED)
+	set(LLVM_STATIC TRUE)
+    find_package(LLVM REQUIRED)
+
+    if (WIN32)
+		# TODO(sergey): On Windows llvm-config doesn't give proper results for the
+		# library names, use hardcoded libraries for now.
+		file(GLOB LLVM_LIBRARIES_RELEASE ${LLVM_ROOT_DIR}/lib/*.lib)
+		file(GLOB LLVM_LIBRARIES_DEBUG ${LLVM_ROOT_DIR}/debug/lib/*.lib)
+		set(LLVM_LIBRARIES)
+		foreach(_llvm_library ${LLVM_LIBRARIES_RELEASE})
+			set(LLVM_LIBRARIES ${LLVM_LIBRARIES} optimized ${_llvm_library})
+		endforeach()
+		foreach(_llvm_library ${LLVM_LIBRARIES_DEBUG})
+			set(LLVM_LIBRARIES ${LLVM_LIBRARIES} debug ${_llvm_library})
+		endforeach()
+    endif()
+	
+  if(WITH_CYCLES_OSL)
+    # TODO(sergey): This is because of the way how our precompiled
+    # libraries works, could be different for someone's else libs..
+    if(APPLE OR MSVC)
+      list(APPEND __boost_packages wave)
+    elseif(NOT (${OSL_LIBRARY_VERSION_MAJOR} EQUAL "1" AND ${OSL_LIBRARY_VERSION_MINOR} LESS "6"))
+      list(APPEND __boost_packages wave)
+    endif()
+  endif()
+endif()
+
+message("Embree: ${EMBREE_LIBRARIES}")
+
+
 # -- External Packages
 
 find_package(Python COMPONENTS Development Interpreter REQUIRED)
@@ -88,12 +138,12 @@ find_package(PySide REQUIRED)
 set(boost_python_component python${Python_VERSION_MAJOR}${Python_VERSION_MINOR})
 string(TOUPPER ${boost_python_component} boost_python_component_upper)
 
-find_package(Boost COMPONENTS ${boost_python_component} thread program_options filesystem) # Not required
+find_package(Boost COMPONENTS ${boost_python_component} thread program_options filesystem ${__boost_packages}) # Not required
 
 if(NOT ${Boost_${boost_python_component_upper}_FOUND})
   # We need to unset this or the new find_package won't overwrite it.
   unset(Boost_LIBRARIES)
-  find_package(Boost COMPONENTS python thread program_options filesystem REQUIRED)
+  find_package(Boost COMPONENTS python thread program_options filesystem ${__boost_packages} REQUIRED)
 endif()
 
 find_package(GLEW REQUIRED)

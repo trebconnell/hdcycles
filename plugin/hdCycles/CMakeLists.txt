@@ -45,6 +45,9 @@ pxr_plugin(${PXR_PACKAGE}
     ${OPENEXR_LIBRARIES}
     ${OPENSUBDIV_LIBRARIES}
     ${OIIO_LIBRARIES}
+    ${EMBREE_LIBRARIES}
+    ${OSL_LIBRARIES}
+    ${LLVM_LIBRARIES}
     
   CPPFILES
     "Mikktspace/mikktspace.c"
@@ -60,6 +63,7 @@ pxr_plugin(${PXR_PACKAGE}
     ${OPENGL_INCLUDE_DIR}
     ${OPENSUBDIV_INCLUDE_DIR}
     ${OPENVDB_INCLUDE_DIR}
+    ${OSL_INCLUDE_DIR}
 
   PUBLIC_CLASSES
     basisCurves

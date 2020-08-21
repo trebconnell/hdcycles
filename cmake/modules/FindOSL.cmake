@@ -1,111 +1,115 @@
+# - Find OpenShadingLanguage library
+# Find the native OpenShadingLanguage includes and library
+# This module defines
+#  OSL_INCLUDE_DIRS, where to find OSL headers, Set when
+#                    OSL_INCLUDE_DIR is found.
+#  OSL_LIBRARIES, libraries to link against to use OSL.
+#  OSL_ROOT_DIR, the base directory to search for OSL.
+#                This can also be an environment variable.
+#  OSL_COMPILER, full path to OSL script compiler.
+#  OSL_FOUND, if false, do not try to use OSL.
+#  OSL_LIBRARY_VERSION_MAJOR, OSL_LIBRARY_VERSION_MINOR,  the major
+#                and minor versions of OSL library if found.
 #
-# Copyright 2018 Pixar
+#=============================================================================
+# Copyright 2014 Blender Foundation.
 #
-# Licensed under the Apache License, Version 2.0 (the "Apache License")
-# with the following modification; you may not use this file except in
-# compliance with the Apache License and the following modification to it:
-# Section 6. Trademarks. is deleted and replaced with:
+# Distributed under the OSI-approved BSD License (the "License");
+# see accompanying file Copyright.txt for details.
 #
-# 6. Trademarks. This License does not grant permission to use the trade
-#    names, trademarks, service marks, or product names of the Licensor
-#    and its affiliates, except as required to comply with Section 4(c) of
-#    the License and to reproduce the content of the NOTICE file.
-#
-# You may obtain a copy of the Apache License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the Apache License with the above modification is
-# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied. See the Apache License for the specific
-# language governing permissions and limitations under the Apache License.
-#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
 
-# Find OSL header.
-find_path(OSL_INCLUDE_DIR
-    NAMES
-        OSL/oslversion.h
-    PATH_SUFFIXES
-        include/
-    HINTS
-        "${OSL_LOCATION}"
-        "$ENV{OSL_LOCATION}"
-    DOC
-        "OSL headers path"
-    )
+# If OSL_ROOT_DIR was defined in the environment, use it.
+IF(NOT OSL_ROOT_DIR AND NOT $ENV{OSL_ROOT_DIR} STREQUAL "")
+  SET(OSL_ROOT_DIR $ENV{OSL_ROOT_DIR})
+ENDIF()
 
-# Parse OSL version.
-if(OSL_INCLUDE_DIR)
-    set(osl_config_file "${OSL_INCLUDE_DIR}/OSL/oslversion.h")
-    if(EXISTS ${osl_config_file})
-        file(STRINGS
-                ${osl_config_file}
-                TMP
-                REGEX "#define OSL_LIBRARY_VERSION_MAJOR.*$")
-        string(REGEX MATCHALL "[0-9]" OSL_MAJOR_VERSION ${TMP})
-        file(STRINGS
-                ${osl_config_file}
-                TMP
-                REGEX "#define OSL_LIBRARY_VERSION_MINOR.*$")
-        string(REGEX MATCHALL "[0-9]" OSL_MINOR_VERSION ${TMP})
-    endif()
-endif()
+SET(_osl_FIND_COMPONENTS
+  oslcomp
+  oslexec
+  oslquery
+  pugixml
+)
 
-# Find libraries and binaries
-find_library (OSL_EXEC_LIBRARY
-    NAMES
-        oslexec
-    PATH_SUFFIXES
-        lib/
-    HINTS
-        "${OSL_LOCATION}"
-        "$ENV{OSL_LOCATION}"
-    )
-find_library (OSL_COMP_LIBRARY
-    NAMES
-        oslcomp
-    PATH_SUFFIXES
-        lib/
-    HINTS
-        "${OSL_LOCATION}"
-        "$ENV{OSL_LOCATION}"
-    )
-find_library (OSL_QUERY_LIBRARY
-    NAMES
-        oslquery
-    PATH_SUFFIXES
-        lib/
-    HINTS
-        "${OSL_LOCATION}"
-        "$ENV{OSL_LOCATION}"
-    )
-find_program (OSL_OSLC_EXECUTABLE
-    NAMES
-        oslc
-    PATH_SUFFIXES
-        bin/
-    HINTS
-        "${OSL_LOCATION}"
-        "$ENV{OSL_LOCATION}"
-    )
-find_program (OSL_OSLINFO_EXECUTABLE
-    NAMES
-        oslinfo
-    PATH_SUFFIXES
-        bin/
-    HINTS
-        "${OSL_LOCATION}"
-        "$ENV{OSL_LOCATION}"
-    )
+SET(_osl_SEARCH_DIRS
+  ${OSL_ROOT_DIR}
+  /usr/local
+  /sw # Fink
+  /opt/local # DarwinPorts
+  /opt/csw # Blastwave
+  /opt/lib/osl
+)
 
-include (FindPackageHandleStandardArgs)
-find_package_handle_standard_args (OSL
-        DEFAULT_MSG
-        OSL_INCLUDE_DIR
-        OSL_EXEC_LIBRARY
-        OSL_COMP_LIBRARY
-        OSL_QUERY_LIBRARY
-        OSL_OSLC_EXECUTABLE
-        OSL_OSLINFO_EXECUTABLE
+FIND_PATH(OSL_INCLUDE_DIR
+  NAMES
+    OSL/oslversion.h
+  HINTS
+    ${_osl_SEARCH_DIRS}
+  PATH_SUFFIXES
+    include
+)
+
+SET(_osl_LIBRARIES)
+FOREACH(COMPONENT ${_osl_FIND_COMPONENTS})
+  STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
+  FIND_LIBRARY(OSL_${UPPERCOMPONENT}_LIBRARY
+    NAMES
+      ${COMPONENT}
+    HINTS
+      ${_osl_SEARCH_DIRS}
+    PATH_SUFFIXES
+      lib64 lib
     )
+  LIST(APPEND _osl_LIBRARIES "${OSL_${UPPERCOMPONENT}_LIBRARY}")
+ENDFOREACH()
+
+FIND_PROGRAM(OSL_COMPILER oslc
+             HINTS ${_osl_SEARCH_DIRS}
+             PATH_SUFFIXES bin)
+
+get_filename_component(OSL_SHADER_HINT ${OSL_COMPILER} DIRECTORY)
+get_filename_component(OSL_SHADER_HINT ${OSL_SHADER_DIR}/../ ABSOLUTE)
+
+FIND_PATH(OSL_SHADER_DIR
+  NAMES
+    stdosl.h
+  HINTS
+    ${OSL_ROOT_DIR}
+    ${OSL_SHADER_HINT}
+    $ENV{OSLHOME}
+    /usr/share/OSL/
+    /usr/include/OSL/
+  PATH_SUFFIXES
+    shaders
+)
+
+# handle the QUIETLY and REQUIRED arguments and set OSL_FOUND to TRUE if
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(OSL DEFAULT_MSG _osl_LIBRARIES OSL_INCLUDE_DIR OSL_COMPILER)
+
+IF(OSL_FOUND)
+  SET(OSL_LIBRARIES ${_osl_LIBRARIES})
+  SET(OSL_INCLUDE_DIRS ${OSL_INCLUDE_DIR})
+
+  FILE(STRINGS "${OSL_INCLUDE_DIR}/OSL/oslversion.h" OSL_LIBRARY_VERSION_MAJOR
+       REGEX "^[ \t]*#define[ \t]+OSL_LIBRARY_VERSION_MAJOR[ \t]+[0-9]+.*$")
+  FILE(STRINGS "${OSL_INCLUDE_DIR}/OSL/oslversion.h" OSL_LIBRARY_VERSION_MINOR
+       REGEX "^[ \t]*#define[ \t]+OSL_LIBRARY_VERSION_MINOR[ \t]+[0-9]+.*$")
+  STRING(REGEX REPLACE ".*#define[ \t]+OSL_LIBRARY_VERSION_MAJOR[ \t]+([.0-9]+).*"
+         "\\1" OSL_LIBRARY_VERSION_MAJOR ${OSL_LIBRARY_VERSION_MAJOR})
+  STRING(REGEX REPLACE ".*#define[ \t]+OSL_LIBRARY_VERSION_MINOR[ \t]+([.0-9]+).*"
+         "\\1" OSL_LIBRARY_VERSION_MINOR ${OSL_LIBRARY_VERSION_MINOR})
+ENDIF(OSL_FOUND)
+
+MARK_AS_ADVANCED(
+  OSL_INCLUDE_DIR
+)
+FOREACH(COMPONENT ${_osl_FIND_COMPONENTS})
+  STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+  MARK_AS_ADVANCED(OSL_${UPPERCOMPONENT}_LIBRARY)
+ENDFOREACH()

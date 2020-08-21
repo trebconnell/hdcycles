@@ -17,6 +17,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+IF(NOT CYCLES_LIBRARY_DIR AND NOT $ENV{CYCLES_LIBRARY_DIR} STREQUAL "")
+  set(CYCLES_LIBRARY_DIR $ENV{CYCLES_LIBRARY_DIR})
+ENDIF()
+
 if(UNIX)
     set(CYCLES_LIB_PREFIX lib)
 endif()
@@ -34,17 +38,7 @@ find_path(CYCLES_INCLUDE_DIRS "render/graph.h"
 # Cycles Libraries
 
 find_path(CYCLES_LIBRARY_DIR
-    NAMES
     ${CYCLES_LIB_PREFIX}cycles_bvh${CMAKE_STATIC_LIBRARY_SUFFIX}
-    ${CYCLES_LIB_PREFIX}cycles_device${CMAKE_STATIC_LIBRARY_SUFFIX}
-    ${CYCLES_LIB_PREFIX}cycles_graph${CMAKE_STATIC_LIBRARY_SUFFIX}
-    ${CYCLES_LIB_PREFIX}cycles_kernel${CMAKE_STATIC_LIBRARY_SUFFIX}
-    ${CYCLES_LIB_PREFIX}cycles_render${CMAKE_STATIC_LIBRARY_SUFFIX}
-    ${CYCLES_LIB_PREFIX}cycles_subd${CMAKE_STATIC_LIBRARY_SUFFIX}
-    ${CYCLES_LIB_PREFIX}cycles_util${CMAKE_STATIC_LIBRARY_SUFFIX}
-    ${CYCLES_LIB_PREFIX}extern_clew${CMAKE_STATIC_LIBRARY_SUFFIX}
-    ${CYCLES_LIB_PREFIX}extern_cuew${CMAKE_STATIC_LIBRARY_SUFFIX}
-    ${CYCLES_LIB_PREFIX}extern_numaapi${CMAKE_STATIC_LIBRARY_SUFFIX}
 
     HINTS
     ${CYCLES_ROOT}
@@ -53,6 +47,9 @@ find_path(CYCLES_LIBRARY_DIR
     DOC "Cycles Libraries directory")
 
 set(CYCLES_LIBS cycles_bvh;cycles_device;cycles_graph;cycles_kernel;cycles_render;cycles_subd;cycles_util;extern_clew;extern_cuew;extern_numaapi)
+if (WITH_CYCLES_OSL)
+    set(CYCLES_LIBS ${CYCLES_LIBS};cycles_kernel_osl)
+endif()
 
 foreach (lib ${CYCLES_LIBS})
     find_library(${lib}_LIBRARY
@@ -93,6 +90,10 @@ include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(Cycles
     REQUIRED_VARS
-        CYCLES_ROOT
+        CYCLES_INCLUDE_DIRS
+        CYCLES_LIBRARY_DIR
+        CYCLES_LIBRARIES
     VERSION_VAR
         CYCLES_VERSION)
+
+message("cycles: ${CYCLES_LIBRARIES}")

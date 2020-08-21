@@ -1,16 +1,34 @@
 ﻿{
+  // 3 required environment variables
+  // UsdDir={root of usd install}
+  // CyclesDir={root of cycles repository, assumes binaries are built into: '/out/build/x64-Release/lib'}
+  // CyclesLibDir={directory containing win64_vc15 where cycles precompiled libraries are}
   "environments": [
     {
       "namespace": "bld",
-      "CyclesDir": "${env.CyclesDir}"
+      "CyclesLibDir": "${env.CyclesLibDir}/win64_vc15"
     },
     {
-      "namespace": "bld",
-      "UsdDir": "${env.CyclesLibDir}"
-    },
-    {
-      "namespace": "bld",
-      "UsdDir": "${env.UsdDir}"
+      "USD_ROOT": "${env.UsdDir}",
+      "BOOST_ROOT": "${env.UsdDir}",
+      "JPEG_ROOT": "${env.UsdDir}",
+      "TBB_ROOT": "${env.UsdDir}",
+      "PNG_ROOT": "${env.UsdDir}",
+      "TIFF_ROOT": "${env.UsdDir}",
+      "ZLIB_ROOT": "${env.UsdDir}",
+      "OPENSUBDIV_ROOT": "${env.UsdDir}",
+
+      "OPENJPEG_ROOT_DIR": "${bld.CyclesLibDir}/openjpeg",
+      "OPENVDB_LOCATION": "${bld.CyclesLibDir}/openvdb",
+      "GLEW_LOCATION": "${bld.CyclesLibDir}/opengl",
+      "OIIO_LOCATION": "${bld.CyclesLibDir}/OpenImageIO",
+      "EMBREE_ROOT_DIR": "${bld.CyclesLibDir}/embree",
+      "OSL_ROOT_DIR": "${bld.CyclesLibDir}/osl",
+      "LLVM_ROOT_DIR": "${bld.CyclesLibDir}/llvm",
+      "OPENEXR_ROOT": "${bld.CyclesLibDir}/openexr",
+
+      "CYCLES_ROOT": "${env.CyclesDir}",
+      "CYCLES_LIBRARY_DIR": "${env.CyclesDir}/out/build/x64-Release/lib"
     }
   ],
   // See https://go.microsoft.com//fwlink//?linkid=834763 for more information about this file.
@@ -27,41 +45,33 @@
       "ctestCommandArgs": "",
       "variables": [
         {
-          "name": "CMAKE_PREFIX_PATH",
-          "value": "${bld.UsdDir}"
+          "name": "WITH_CYCLES_EMBREE",
+          "value": "On"
         },
         {
-          "name": "USD_ROOT",
-          "value": "${bld.UsdDir}"
+          "name": "WITH_CYCLES_OSL",
+          "value": "On"
+        }
+      ]
+    },
+    {
+      "name": "x64-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": "",
+      "variables": [
+        {
+          "name": "WITH_CYCLES_EMBREE",
+          "value": "On"
         },
         {
-          "name": "OPENJPEG_ROOT_DIR",
-          "value": "${bld.CyclesLibDir}\\win64_vc15\\openjpeg"
-        },
-        {
-          "name": "OPENVDB_LOCATION",
-          "value": "${bld.CyclesLibDir}\\win64_vc15\\openvdb"
-        },
-        {
-          "name": "GLEW_LOCATION",
-          "value": "${bld.CyclesLibDir}\\win64_vc15\\opengl"
-        },
-
-        {
-          "name": "CYCLES_ROOT",
-          "value": "${bld.CyclesDir}\\win64_vc15\\opengl"
-        },
-        {
-          "name": "CYCLES_EMBREE",
-          "value": "${bld.CyclesDir}\\win64_vc15\\opengl"
-        },
-        {
-          "name": "CYCLES_LIBRARY_DIR",
-          "value": "${bld.CyclesDir}\\out\\build\\x64-Release\\lib"
-        },
-        {
-          "name": "CMAKE_STATIC_LIBRARY_SUFFIX",
-          "value": ".lib"
+          "name": "WITH_CYCLES_OSL",
+          "value": "On"
         }
       ]
     }
