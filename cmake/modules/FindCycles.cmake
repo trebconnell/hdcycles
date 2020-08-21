@@ -47,8 +47,8 @@ find_path(CYCLES_LIBRARY_DIR
     ${CYCLES_LIB_PREFIX}extern_numaapi${CMAKE_STATIC_LIBRARY_SUFFIX}
 
     HINTS
-    ${CYCLES_ROOT}/lib
-    $ENV{CYCLES_ROOT}/lib
+    ${CYCLES_ROOT}
+    $ENV{CYCLES_ROOT}
 
     DOC "Cycles Libraries directory")
 
@@ -93,8 +93,6 @@ include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(Cycles
     REQUIRED_VARS
-        CYCLES_INCLUDE_DIRS
-        CYCLES_LIBRARY_DIR
-        CYCLES_LIBRARIES
+        CYCLES_ROOT
     VERSION_VAR
         CYCLES_VERSION)

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <Type Name="pxrInternal_v0_20__pxrReserved__::VtArray&lt;*&gt;">
+    <DisplayString>{{ size={_shapeData.totalSize} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>_shapeData.totalSize</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <!-- vec 2 types -->
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfVec2i ">
+    <DisplayString>{{ {_data[0]}, {_data[1]} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>2</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfVec2f ">
+    <DisplayString>{{ {_data[0]}, {_data[1]} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>2</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfVec2d ">
+    <DisplayString>{{ {_data[0]}, {_data[1]} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>2</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+
+  <!-- vec 3 types -->
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfVec3i">
+    <DisplayString>{{ {_data[0]}, {_data[1]}, {_data[2]} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>3</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfVec3f">
+    <DisplayString>{{ {_data[0]}, {_data[1]}, {_data[2]} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>3</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfVec3d">
+    <DisplayString>{{ {_data[0]}, {_data[1]}, {_data[2]} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>3</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <!-- vec 4 types -->
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfVec4i">
+    <DisplayString>{{ {_data[0]}, {_data[1]}, {_data[2]}, {_data[3]} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>4</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfVec4f">
+    <DisplayString>{{ {_data[0]}, {_data[1]}, {_data[2]}, {_data[3]} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>4</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfVec4d">
+    <DisplayString>{{ {_data[0]}, {_data[1]}, {_data[2]}, {_data[3]} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>4</Size>
+        <ValuePointer>_data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <!-- Matrix 2 types -->
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfMatrix2f">
+    <DisplayString>{{ {{_mtx._data[0]}, {_mtx._data[1]}}, {{_mtx._data[2]}, {_mtx._data[3]}} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>2</Size>
+        <ValuePointer>(GfVec2f*)_mtx._data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfMatrix2d">
+    <DisplayString>{{ {{_mtx._data[0]}, {_mtx._data[1]}}, {{_mtx._data[2]}, {_mtx._data[3]}} }}</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>2</Size>
+        <ValuePointer>(GfVec2d*)_mtx._data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <!-- Matrix 3 types -->
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfMatrix3f">
+    <DisplayString>[3, 3]: {{ {_mtx._data[0]}, {_mtx._data[1]}, {_mtx._data[2]} }}...</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>3</Size>
+        <ValuePointer>(GfVec3f*)_mtx._data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfMatrix3d">
+    <DisplayString>[3, 3]: {{ {_mtx._data[0]}, {_mtx._data[1]}, {_mtx._data[2]} }}...</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>3</Size>
+        <ValuePointer>(GfVec3d*)_mtx._data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <!-- Matrix 4 types -->
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfMatrix4f">
+    <DisplayString>[4,4]: {{ {_mtx._data[0]}, {_mtx._data[1]}, {_mtx._data[2]}, {_mtx._data[3]} }}...</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>4</Size>
+        <ValuePointer>(GfVec4f*)_mtx._data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="pxrInternal_v0_20__pxrReserved__::GfMatrix4d">
+    <DisplayString>[4,4]: {{ {_mtx._data[0]}, {_mtx._data[1]}, {_mtx._data[2]}, {_mtx._data[3]} }}...</DisplayString>
+    <Expand>
+      <ArrayItems>
+        <Size>4</Size>
+        <ValuePointer>(GfVec4d*)_mtx._data</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <!-- SdfPath caches paths in a global hash map -->
+  <!-- This is unfortunately extremely non-trivial (impossible) to visualize -->
+  <!-- Offending fn is: Sdf_PathNode::GetPathToken -->
+  <Type Name="pxrInternal_v0_20__pxrReserved__::SdfPath">
+    <DisplayString Condition="_primPart._poolHandle.value == 0">[empty]"</DisplayString>
+    <DisplayString Condition="_primPart._poolHandle.value != 0">{_primPart._poolHandle.value}|{_propPart._poolHandle.value}</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_20__pxrReserved__::TfToken">
+    <Intrinsic Name="ptr"   Expression="(_Rep*)((unsigned long long)_rep._ptrAndBits &amp; ~0xF)"/>
+    <Intrinsic Name="has_value"   Expression="ptr() != 0"/>
+    <DisplayString Condition="!has_value()">[empty]"</DisplayString>
+    <DisplayString Condition="has_value()">{{ {ptr()->_str} }}"</DisplayString>
+  </Type>
+
+  <Type Name="pxrInternal_v0_20__pxrReserved__::VtValue">
+    <Intrinsic Name="ptr"   Expression="(_TypeInfo*)((unsigned long long)_info._ptrAndBits &amp; ~0xF)"/>
+    <Intrinsic Name="has_value"   Expression="ptr() != 0"/>
+    <DisplayString Condition="!has_value()">[empty]</DisplayString>
+    <DisplayString Condition="has_value()">[variadic: {ptr()->typeInfo}]</DisplayString>
+    <Expand>
+      <Synthetic Name="type" Condition="has_value()">
+        <DisplayString>{ptr()->typeInfo}</DisplayString>
+      </Synthetic>
+      <Synthetic Name="[ptr]">
+        <DisplayString>{_storage}</DisplayString>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+  <Type Name="pxrInternal_v0_20__pxrReserved__::TfType">
+    <Intrinsic Name="has_value"   Expression="_info != 0"/>
+    <DisplayString Condition="!has_value()">[unknown]</DisplayString>
+    <DisplayString Condition="has_value()">{{ {*(std::string*)(((pxrInternal_v0_20__pxrReserved__::TfType*)_info) + 1)} }}</DisplayString>
+  </Type>
+
+</AutoVisualizer>

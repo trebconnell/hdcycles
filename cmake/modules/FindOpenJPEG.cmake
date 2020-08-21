@@ -35,16 +35,16 @@ FIND_PATH(OPENJPEG_INCLUDE_DIR
   PATH_SUFFIXES
     include
     # Support future versions
-    openjpeg-2.9
-    openjpeg-2.8
-    openjpeg-2.7
-    openjpeg-2.6
-    openjpeg-2.5
-    openjpeg-2.4
-    openjpeg-2.3
-    openjpeg-2.2
-    openjpeg-2.1
-    openjpeg-2.0
+    include/openjpeg-2.9
+    include/openjpeg-2.8
+    include/openjpeg-2.7
+    include/openjpeg-2.6
+    include/openjpeg-2.5
+    include/openjpeg-2.4
+    include/openjpeg-2.3
+    include/openjpeg-2.2
+    include/openjpeg-2.1
+    include/openjpeg-2.0
 )
 
 FIND_LIBRARY(OPENJPEG_LIBRARY

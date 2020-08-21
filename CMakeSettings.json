@@ -1,0 +1,69 @@
+﻿{
+  "environments": [
+    {
+      "namespace": "bld",
+      "CyclesDir": "${env.CyclesDir}"
+    },
+    {
+      "namespace": "bld",
+      "UsdDir": "${env.CyclesLibDir}"
+    },
+    {
+      "namespace": "bld",
+      "UsdDir": "${env.UsdDir}"
+    }
+  ],
+  // See https://go.microsoft.com//fwlink//?linkid=834763 for more information about this file.
+  "configurations": [
+    {
+      "name": "x64-Release",
+      "generator": "Ninja",
+      "configurationType": "RelWithDebInfo",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": "",
+      "variables": [
+        {
+          "name": "CMAKE_PREFIX_PATH",
+          "value": "${bld.UsdDir}"
+        },
+        {
+          "name": "USD_ROOT",
+          "value": "${bld.UsdDir}"
+        },
+        {
+          "name": "OPENJPEG_ROOT_DIR",
+          "value": "${bld.CyclesLibDir}\\win64_vc15\\openjpeg"
+        },
+        {
+          "name": "OPENVDB_LOCATION",
+          "value": "${bld.CyclesLibDir}\\win64_vc15\\openvdb"
+        },
+        {
+          "name": "GLEW_LOCATION",
+          "value": "${bld.CyclesLibDir}\\win64_vc15\\opengl"
+        },
+
+        {
+          "name": "CYCLES_ROOT",
+          "value": "${bld.CyclesDir}\\win64_vc15\\opengl"
+        },
+        {
+          "name": "CYCLES_EMBREE",
+          "value": "${bld.CyclesDir}\\win64_vc15\\opengl"
+        },
+        {
+          "name": "CYCLES_LIBRARY_DIR",
+          "value": "${bld.CyclesDir}\\out\\build\\x64-Release\\lib"
+        },
+        {
+          "name": "CMAKE_STATIC_LIBRARY_SUFFIX",
+          "value": ".lib"
+        }
+      ]
+    }
+  ]
+}
