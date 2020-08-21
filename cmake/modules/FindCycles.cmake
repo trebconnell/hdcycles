@@ -48,7 +48,7 @@ find_path(CYCLES_LIBRARY_DIR
 
 set(CYCLES_LIBS cycles_bvh;cycles_device;cycles_graph;cycles_kernel;cycles_render;cycles_subd;cycles_util;extern_clew;extern_cuew;extern_numaapi)
 if (WITH_CYCLES_OSL)
-    set(CYCLES_LIBS %CYCLES_LIBS%;cycles_kernel_osl)
+    set(CYCLES_LIBS ${CYCLES_LIBS};cycles_kernel_osl)
 endif()
 
 foreach (lib ${CYCLES_LIBS})
@@ -95,3 +95,5 @@ find_package_handle_standard_args(Cycles
         CYCLES_LIBRARIES
     VERSION_VAR
         CYCLES_VERSION)
+
+message("cycles: ${CYCLES_LIBRARIES}")
