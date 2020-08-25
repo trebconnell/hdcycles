@@ -775,19 +775,17 @@ HdCyclesMesh::Sync(HdSceneDelegate* sceneDelegate, HdRenderParam* renderParam,
                                  ++i) {
                                 uvIndices.push_back(i);
                             }
-                        }
+                            meshUtil.ComputeTriangulatedFaceVaryingPrimvar(
+                                uvs.data(), uvs.size(), HdTypeFloatVec2,
+                                &triangulated);
 
-                        meshUtil.ComputeTriangulatedFaceVaryingPrimvar(
-                            uvs.data(), uvs.size(), HdTypeFloatVec2,
-                            &triangulated);
+                            VtVec2fArray triangulatedUvs
+                                = triangulated.Get<VtVec2fArray>();
 
-                        VtVec2fArray m_uvs_tri
-                            = triangulated.Get<VtVec2fArray>();
-                        if (m_useSubdivision && m_subdivEnabled) {
-                            _AddUVSet(pv.name, uvs, primvarDescsEntry.first);
-                        } else {
-                            _AddUVSet(pv.name, m_uvs_tri,
+                            _AddUVSet(pv.name, triangulatedUvs,
                                       primvarDescsEntry.first);
+                        } else {
+                            _AddUVSet(pv.name, uvs, primvarDescsEntry.first);
                         }
                     }
                 }
