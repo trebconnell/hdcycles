@@ -17,6 +17,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+message("cycles: ${CYCLES_LIBRARY_DIR}")
+
 IF(NOT CYCLES_LIBRARY_DIR AND NOT $ENV{CYCLES_LIBRARY_DIR} STREQUAL "")
   set(CYCLES_LIBRARY_DIR $ENV{CYCLES_LIBRARY_DIR})
 ENDIF()

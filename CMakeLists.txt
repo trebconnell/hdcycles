@@ -37,6 +37,8 @@ include(CXXDefaults)
 add_definitions(${_PXR_CXX_DEFINITIONS})
 set(CMAKE_CXX_FLAGS "${_PXR_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
 
+
+
 if(WIN32)
   set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:libmmd.lib /NODEFAULTLIB:libirc.lib /NODEFAULTLIB:svml_dispmd.lib /NODEFAULTLIB:libdecimal.lib" )
   
@@ -165,6 +167,8 @@ find_package(USD REQUIRED)
 find_package(Cycles REQUIRED)
 
 # -- Build Flags
+add_definitions(-DTBB_USE_ASSERT=0)
+add_definitions(-DTBB_USE_THREADING_TOOLS=0)
 
 if("${USD_MINOR_VERSION}" STRGREATER_EQUAL "20")
 add_definitions(-DUSD_HAS_NEW_SDR_NODE_CONSTRUCTOR)

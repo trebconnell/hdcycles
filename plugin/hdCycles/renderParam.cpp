@@ -98,6 +98,14 @@ HdCyclesRenderParam::StartRender()
 }
 
 void
+HdCyclesRenderParam::WaitRender()
+{
+    if (!m_cyclesSession->params.progressive && !m_paused) {
+        m_cyclesSession->wait();
+    }
+}
+
+void
 HdCyclesRenderParam::StopRender()
 {
     _CyclesExit();
@@ -114,13 +122,19 @@ HdCyclesRenderParam::RestartRender()
 void
 HdCyclesRenderParam::PauseRender()
 {
+    m_paused = true;
     m_cyclesSession->set_pause(true);
 }
 
 void
 HdCyclesRenderParam::ResumeRender()
 {
+    m_paused = false;
     m_cyclesSession->set_pause(false);
+    if (!m_cyclesSession->params.progressive) {
+        // Will only wait if render has started.
+        m_cyclesSession->wait();
+    }
 }
 
 void
@@ -401,7 +415,9 @@ HdCyclesRenderParam::_CyclesInitialize()
 
     /* Use progressive rendering */
 
-    params.progressive            = true;
+    params.progressive = true;
+    // Get memory corruption if this is set to false for some reason...
+    //params.progressive            = config.progressive;
     params.run_denoising          = false;
     params.write_denoising_passes = false;
     params.full_denoising         = false;
@@ -424,6 +440,8 @@ HdCyclesRenderParam::_CyclesInitialize()
         return false;
 
     m_cyclesSession = new ccl::Session(params);
+
+    m_cyclesSession->set_denoising(true, false);
 
     if (HdCyclesConfig::GetInstance().enable_logging)
         m_cyclesSession->progress.set_update_callback(
@@ -457,7 +475,8 @@ HdCyclesRenderParam::_CyclesInitialize()
     m_bufferParams.full_height = m_height;
 
     ccl::Pass::add(ccl::PASS_DEPTH, m_bufferParams.passes, "depth");
-    
+    ccl::Pass::add(ccl::PASS_NORMAL, m_bufferParams.passes, "normal");
+
     // PASS_OBJECT could suffice and be slightly more performant.
     // Cryptomatte is more powerful, so supporting just this for now.
     ccl::Pass::add(ccl::PASS_CRYPTOMATTE, m_bufferParams.passes, "object");
@@ -469,7 +488,7 @@ HdCyclesRenderParam::_CyclesInitialize()
         ccl::CRYPT_OBJECT | ccl::CRYPT_MATERIAL | ccl::CRYPT_ASSET);
     m_cyclesScene->film->cryptomatte_depth = 1;
 
-    m_cyclesScene->film->passes = m_bufferParams.passes;
+    m_cyclesScene->film->passes   = m_bufferParams.passes;
     m_cyclesScene->film->exposure = config.exposure;
 
     if (config.enable_transparent_background)
@@ -569,6 +588,9 @@ void
 HdCyclesRenderParam::CyclesStart()
 {
     m_cyclesSession->start();
+    if (!m_cyclesSession->params.progressive && !m_paused) {
+        m_cyclesSession->wait();
+    }
 }
 
 void

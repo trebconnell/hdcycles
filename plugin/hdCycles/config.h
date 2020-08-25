@@ -129,6 +129,12 @@ public:
     bool enable_experimental;
 
     /**
+     * @brief Should cycles render progressively
+     *
+     */
+    bool progressive;
+
+    /**
      * @brief Cycles BVH Type. Use Dynamic for any interactive viewport. (DYNAMIC, STATIC)
      * 
      */

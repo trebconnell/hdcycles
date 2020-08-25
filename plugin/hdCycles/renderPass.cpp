@@ -119,11 +119,12 @@ HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const& renderPassState,
             m_colorBuffer.resize(numPixels * pixelSize);
             memset(m_colorBuffer.data(), 0, numPixels * pixelSize);
 
-            m_cryptoVec.resize(numPixels * pixelSize);
-            m_cryptoInt.resize(numPixels * pixelSize);
+            m_gtFlt.resize(numPixels * 4);
+            m_gtInt.resize(numPixels);
         }
     }
 
+    renderParam->WaitRender();
     m_isConverged = renderParam->GetProgress() >= 1.0f;
 
     HdRenderPassAovBindingVector aovBindings = renderPassState->GetAovBindings();
@@ -151,7 +152,7 @@ HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const& renderPassState,
                        || aov.aovName == HdAovTokens->cameraDepth) {
                 renderParam->GetCyclesSession()->buffers->copy_from_device();
                 if (renderParam->GetCyclesSession()->buffers->get_pass_rect(
-                        "depth", 1, 1, 1, m_depthBuffer.data())) {
+                        "depth", 1, 1, 1, m_gtFlt.data())) {
                     // Transform to clip space if-needed
                     if (aov.aovName == HdAovTokens->depth) {
                         const auto clipNear = projMtx[3][2]
@@ -159,19 +160,34 @@ HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const& renderPassState,
                         const auto clipFar = projMtx[3][2]
                                              / (projMtx[2][2] + 1);
                         const auto clipDelta = clipFar - clipNear;
-                        for (auto& depth : m_depthBuffer) {
+                        auto depthIter       = m_gtFlt.data();
+                        for (auto i = 0; i < w * h; ++i) {
+                            auto& depthVal = *(depthIter++);
+
                             // get_pass_rect assigns this value to background
-                            if (depth >= 1e10f) {
-                                depth = -1;
+                            if (depthVal >= 1e10f) {
+                                depthVal = -1;
                             } else {
-                                depth -= clipNear;
-                                depth /= clipDelta;
+                                depthVal -= clipNear;
+                                depthVal /= clipDelta;
                             }
                         }
                     }
 
                     rb->Blit(HdFormatFloat32, w, h, 0, w,
-                             (const uint8_t*)m_depthBuffer.data());
+                             (const uint8_t*)m_gtFlt.data());
+                }
+            } else if (aov.aovName == HdAovTokens->normal) {
+                renderParam->GetCyclesSession()->buffers->copy_from_device();
+                if (renderParam->GetCyclesSession()->buffers->get_pass_rect(
+                        "normal", 1, 1, 3, m_gtFlt.data())) {
+                    auto vecIter = reinterpret_cast<GfVec3f*>(m_gtFlt.data());
+                    for (auto i = 0; i < w * h; ++i) {
+                        (vecIter++)->Normalize();
+                    }
+
+                    rb->Blit(HdFormatFloat32Vec3, w, h, 0, w,
+                             (const uint8_t*)m_gtFlt.data());
                 }
             } else {
                 // Check to see if this aov corresponds to a cryptomatte token
@@ -190,31 +206,32 @@ HdCyclesRenderPass::_Execute(HdRenderPassStateSharedPtr const& renderPassState,
 
                     renderParam->GetCyclesSession()->buffers->copy_from_device();
                     if (renderParam->GetCyclesSession()->buffers->get_pass_rect(
-                            cryptomatteType.second, 1, 1, 4,
-                            &(*m_cryptoVec.data())[0])) {
-                        auto iter = m_cryptoInt.begin();
-                        for (const auto& vec : m_cryptoVec) {
-                            if (vec[0] == 0) {
-                                *iter = -1;
+                            cryptomatteType.second, 1, 1, 4, m_gtFlt.data())) {
+                        auto intIter = m_gtInt.begin();
+                        auto vecIter = reinterpret_cast<GfVec4f*>(
+                            m_gtFlt.data());
+                        for (auto i = 0; i < w * h; ++i) {
+                            auto& vecVal = *(vecIter++);
+                            auto& intVal = *(intIter++);
+                            if (vecVal[0] == 0) {
+                                intVal = -1;
                             } else {
                                 if (token == HdAovTokens->primId) {
-                                    *iter = renderParam->CryptoAssetToId(
-                                        vec[0]);
+                                    intVal = renderParam->CryptoAssetToId(
+                                        vecVal[0]);
                                 } else if (token == HdAovTokens->instanceId) {
-                                    *iter = renderParam->CryptoObjectToId(
-                                        vec[0]);
+                                    intVal = renderParam->CryptoObjectToId(
+                                        vecVal[0]);
                                 } else if (token == HdAovTokens->elementId) {
-                                    *iter = renderParam->CryptoMaterialToId(
-                                        vec[0]);
+                                    intVal = renderParam->CryptoMaterialToId(
+                                        vecVal[0]);
                                 }
                             }
-
-                            ++iter;
                         }
                         rb->Blit(HdFormatInt32, w, h, 0, w,
-                                 (const uint8_t*)m_cryptoInt.data());
+                                 (const uint8_t*)m_gtInt.data());
+                        break;
                     }
-                    break;
                 }
             }
         }

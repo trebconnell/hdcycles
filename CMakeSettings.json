@@ -9,14 +9,15 @@
       "CyclesLibDir": "${env.CyclesLibDir}/win64_vc15"
     },
     {
-      "USD_ROOT": "${env.UsdDir}",
-      "BOOST_ROOT": "${env.UsdDir}",
-      "JPEG_ROOT": "${env.UsdDir}",
-      "TBB_ROOT": "${env.UsdDir}",
-      "PNG_ROOT": "${env.UsdDir}",
-      "TIFF_ROOT": "${env.UsdDir}",
-      "ZLIB_ROOT": "${env.UsdDir}",
-      "OPENSUBDIV_ROOT": "${env.UsdDir}",
+      "USD_DIR": "${env.UsdDir}/../${name}",
+      "USD_ROOT": "${env.USD_DIR}",
+      "BOOST_ROOT": "${env.USD_DIR}",
+      "JPEG_ROOT": "${env.USD_DIR}",
+      "TBB_ROOT": "${env.USD_DIR}",
+      "PNG_ROOT": "${env.USD_DIR}",
+      "TIFF_ROOT": "${env.USD_DIR}",
+      "ZLIB_ROOT": "${env.USD_DIR}",
+      "OPENSUBDIV_ROOT": "${env.USD_DIR}",
 
       "OPENJPEG_ROOT_DIR": "${bld.CyclesLibDir}/openjpeg",
       "OPENVDB_LOCATION": "${bld.CyclesLibDir}/openvdb",
@@ -28,13 +29,13 @@
       "OPENEXR_ROOT": "${bld.CyclesLibDir}/openexr",
 
       "CYCLES_ROOT": "${env.CyclesDir}",
-      "CYCLES_LIBRARY_DIR": "${env.CyclesDir}/out/build/x64-Release/lib"
+      "CYCLES_LIBRARY_DIR": "${env.CyclesDir}/out/build/x64-${name}/lib"
     }
   ],
   // See https://go.microsoft.com//fwlink//?linkid=834763 for more information about this file.
   "configurations": [
     {
-      "name": "x64-Release",
+      "name": "Release",
       "generator": "Ninja",
       "configurationType": "RelWithDebInfo",
       "inheritEnvironments": [ "msvc_x64_x64" ],
@@ -55,7 +56,7 @@
       ]
     },
     {
-      "name": "x64-Debug",
+      "name": "Debug",
       "generator": "Ninja",
       "configurationType": "Debug",
       "inheritEnvironments": [ "msvc_x64_x64" ],

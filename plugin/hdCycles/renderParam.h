@@ -68,6 +68,13 @@ public:
     void StartRender();
 
     /**
+     * @brief Wait for cycles render session to converge
+     * 
+     */
+    HDCYCLES_API
+    void WaitRender();
+
+    /**
      * @brief Stop the current render and close cycles instance
      * 
      * @return HDCYCLES_API StopRender 
@@ -544,6 +551,8 @@ private:
 
     int m_width;
     int m_height;
+
+    bool m_paused = false;
 
     bool m_objectsUpdated;
     bool m_geometryUpdated;

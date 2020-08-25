@@ -68,9 +68,9 @@ foreach(OPENEXR_LIB
     # using both versioned and unversioned names.
     find_library(OPENEXR_${OPENEXR_LIB}_LIBRARY
         NAMES
-            ${OPENEXR_LIB}-${OPENEXR_MAJOR_VERSION}_${OPENEXR_MINOR_VERSION}
-            ${OPENEXR_LIB}
-            ${OPENEXR_LIB}_s
+            ${OPENEXR_LIB}-${OPENEXR_MAJOR_VERSION}_${OPENEXR_MINOR_VERSION}${LIB_CONFIG_SUFFIX}
+            ${OPENEXR_LIB}${LIB_CONFIG_SUFFIX}
+            ${OPENEXR_LIB}_s${LIB_CONFIG_SUFFIX}
         HINTS
             "${OPENEXR_LOCATION}"
             "$ENV{OPENEXR_LOCATION}"

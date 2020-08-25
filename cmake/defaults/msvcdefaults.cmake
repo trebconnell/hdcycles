@@ -70,6 +70,16 @@ _disable_warning("4091")
 # XXX:figure out real fix
 _disable_warning("4273")
 
+# non dll-interface class 'Iex_2_2::BaseExc' used as base for dll-interface class '*'
+# OpenEXR\IexBaseExc.h(143)
+_disable_warning("4275")
+
+# unary minus operator applied to unsigned type, result still unsigned
+# This used intentionally in bit twiddling in Cycles headers.
+# Could cast to signed and back to avoid warning.
+# util\util_math.h
+_disable_warning("4146")
+
 # qualifier applied to function type has no meaning; ignored
 # tbb/parallel_for_each.h
 _disable_warning("4180")
@@ -77,6 +87,7 @@ _disable_warning("4180")
 # '<<': result of 32-bit shift implicitly converted to 64 bits
 # tbb/enumerable_thread_specific.h
 _disable_warning("4334")
+
 
 # Disable warning C4996 regarding fopen(), strcpy(), etc.
 _add_define("_CRT_SECURE_NO_WARNINGS")
@@ -117,6 +128,17 @@ set(_PXR_CXX_FLAGS "${_PXR_CXX_FLAGS} /Zi")
 # Enable multiprocessor builds.
 set(_PXR_CXX_FLAGS "${_PXR_CXX_FLAGS} /MP")
 set(_PXR_CXX_FLAGS "${_PXR_CXX_FLAGS} /Gm-")
+
+message("build type: ${CMAKE_BUILD_TYPE}")
+
+string( TOLOWER "${CMAKE_BUILD_TYPE}" build_type_lower )
+if(build_type_lower STREQUAL "debug")
+    set(LIB_CONFIG_SUFFIX _d)
+    set(LIB_CONFIG_PATH /debug)
+else()
+    set(LIB_CONFIG_SUFFIX )
+    set(LIB_CONFIG_PATH )
+endif()
 
 # Ignore LNK4221.  This happens when making an archive with a object file
 # with no symbols in it.  We do this a lot because of a pattern of having

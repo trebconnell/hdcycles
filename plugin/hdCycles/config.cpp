@@ -69,6 +69,9 @@ TF_DEFINE_ENV_SETTING(
 TF_DEFINE_ENV_SETTING(HD_CYCLES_ENABLE_EXPERIMENTAL, false,
                       "Experimental cycles support.");
 
+TF_DEFINE_ENV_SETTING(HD_CYCLES_PROGRESSIVE, true,
+                      "Cycles progressive render.");
+
 TF_DEFINE_ENV_SETTING(HD_CYCLES_BVH_TYPE, "DYNAMIC", "Cycles BVH Type ");
 
 TF_DEFINE_ENV_SETTING(HD_CYCLES_DEVICE_NAME, "CPU",
@@ -176,6 +179,7 @@ HdCyclesConfig::HdCyclesConfig()
 
     // -- Cycles Settings
     enable_experimental   = TfGetEnvSetting(HD_CYCLES_ENABLE_EXPERIMENTAL);
+    progressive           = TfGetEnvSetting(HD_CYCLES_PROGRESSIVE);
     bvh_type              = TfGetEnvSetting(HD_CYCLES_BVH_TYPE);
     device_name           = TfGetEnvSetting(HD_CYCLES_DEVICE_NAME);
     shading_system        = TfGetEnvSetting(HD_CYCLES_SHADING_SYSTEM);

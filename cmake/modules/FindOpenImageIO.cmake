@@ -81,7 +81,7 @@ foreach(OIIO_LIB
     )
 
     find_library(OIIO_${OIIO_LIB}_LIBRARY
-            ${OIIO_LIB}
+            ${OIIO_LIB}${LIB_CONFIG_SUFFIX}
         HINTS
             "${OIIO_LOCATION}"
             "$ENV{OIIO_LOCATION}"
