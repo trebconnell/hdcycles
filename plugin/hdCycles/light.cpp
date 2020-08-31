@@ -31,6 +31,7 @@
 #include <util/util_math_float3.h>
 #include <util/util_string.h>
 
+#include <pxr/usd/ar/resolver.h>
 #include <pxr/usd/sdf/assetPath.h>
 #include <pxr/usd/usdLux/tokens.h>
 
@@ -364,7 +365,9 @@ HdCyclesLight::Sync(HdSceneDelegate* sceneDelegate, HdRenderParam* renderParam,
                                                     HdLightTokens->textureFile);
 
             if (textureFile.IsHolding<SdfAssetPath>()) {
-                SdfAssetPath ap      = textureFile.UncheckedGet<SdfAssetPath>();
+                SdfAssetPath ap = textureFile.UncheckedGet<SdfAssetPath>();
+                ArGetResolver().FetchToLocalResolvedPath(ap.GetAssetPath(),
+                                                         ap.GetResolvedPath());
                 std::string filepath = ap.GetResolvedPath();
 
                 // TODO: Prevent this string comparison

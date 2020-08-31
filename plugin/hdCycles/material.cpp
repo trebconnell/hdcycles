@@ -34,6 +34,7 @@
 #include <pxr/base/tf/staticTokens.h>
 #include <pxr/imaging/hd/sceneDelegate.h>
 #include <pxr/imaging/hf/diagnostic.h>
+#include <pxr/usd/ar/resolver.h>
 #include <pxr/usd/sdf/types.h>
 #include <pxr/usd/sdr/declare.h>
 #include <pxr/usd/sdr/registry.h>
@@ -136,8 +137,11 @@ matConvertUSDUVTexture(HdMaterialNode& usd_node,
     for (std::pair<TfToken, VtValue> params : usd_node.parameters) {
         if (params.first == _tokens->file) {
             if (params.second.IsHolding<SdfAssetPath>()) {
+                const auto& ap = params.second.UncheckedGet<SdfAssetPath>();
+                ArGetResolver().FetchToLocalResolvedPath(ap.GetAssetPath(),
+                                                         ap.GetResolvedPath());
                 imageTexture->filename = ccl::ustring(
-                    params.second.Get<SdfAssetPath>().GetResolvedPath().c_str());
+                    ap.GetResolvedPath().c_str());
             }
         }
     }
@@ -300,6 +304,9 @@ convertCyclesNode(HdMaterialNode& usd_node,
             case ccl::SocketType::STRING: {
                 std::string val;
                 if (params.second.IsHolding<SdfAssetPath>()) {
+                    const auto& ap = params.second.UncheckedGet<SdfAssetPath>();
+                    ArGetResolver().FetchToLocalResolvedPath(
+                        ap.GetAssetPath(), ap.GetResolvedPath());
 // TODO:
 // USD Issue-916 means that we cant resolve relative UDIM
 // paths. This is fixed in 20.08. When we upgrade to that
@@ -307,18 +314,14 @@ convertCyclesNode(HdMaterialNode& usd_node,
 // For now, if the string has a UDIM in it, don't resolve.
 // (This means relative UDIMs won't work)
 #ifdef USD_HAS_UDIM_RESOLVE_FIX
-                    val = std::string(params.second.Get<SdfAssetPath>()
-                                          .GetResolvedPath()
-                                          .c_str());
+                    val = std::string(ap.GetResolvedPath().c_str());
 #else
                     std::string raw_path = std::string(
-                        params.second.Get<SdfAssetPath>().GetAssetPath().c_str());
+                        ap.GetAssetPath().c_str());
                     if (HdCyclesPathIsUDIM(raw_path)) {
                         val = raw_path;
                     } else {
-                        val = std::string(params.second.Get<SdfAssetPath>()
-                                              .GetResolvedPath()
-                                              .c_str());
+                        val = std::string(ap.GetResolvedPath().c_str());
                     }
 #endif
                 } else if (params.second.IsHolding<TfToken>()) {
